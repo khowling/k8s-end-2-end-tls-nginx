@@ -63,7 +63,7 @@ spec:
   tls:
   - hosts:
     - dotnet-ssl.kizah.in
-    secretName: quickstart-example-tls
+    secretName: dotnet-ssl-example
   ingressClassName: nginx
   rules:
     - host: dotnet-ssl.kizah.in
