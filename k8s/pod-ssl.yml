@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnettls
+  labels:
+    app: dotnettls
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dotnettls
+  template:
+    metadata:
+      labels:
+        app: dotnettls
+    spec:
+      serviceAccountName: workload-identity-sa
+      containers:
+        - name: dotnettls
+          image: mcr.microsoft.com/dotnet/samples:aspnetapp
+          env:
+          - name: ASPNETCORE_URLS
+            value: "https://+;http://+"
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+            value: ""
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+            value: "/certs/https.pfx"
+          volumeMounts:
+          - name: secrets-store01-inline
+            mountPath: "/certs"
+            readOnly: true
+      volumes:
+        - name: secrets-store01-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-kvname-workload-identity"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnettls
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 443
+  selector:
+    app: dotnettls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dotnettls-https
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  labels:
+    app: dotnettls
+spec:
+  tls:
+  - hosts:
+    - dotnettls-https.kizah.in
+    secretName: quickstart-example-tls
+  ingressClassName: nginx
+  rules:
+    - host: dotnettls-https.kizah.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dotnettls # helloworld # dotnettls
+                port:
+                  name: https

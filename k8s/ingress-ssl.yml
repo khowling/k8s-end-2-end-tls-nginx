@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dotnettls-https
+  annotations:
+    cert-manager.io/issuer: letsencrypt-prod
+  labels:
+    app: dotnettls
+spec:
+  tls:
+  - hosts:
+    - tls.kizah.in
+    secretName: quickstart-example-tls
+  ingressClassName: nginx
+  rules:
+    - host: tls.kizah.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dotnettls
+                port:
+                  name: https

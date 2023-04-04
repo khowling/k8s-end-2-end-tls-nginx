@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dotnettls-http
+  labels:
+    app: dotnettls
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: tls.kizah.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dotnettls
+                port:
+                  name: http
