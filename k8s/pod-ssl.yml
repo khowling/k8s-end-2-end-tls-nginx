@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dotnettls
+  name: dotnet-ssl
   labels:
-    app: dotnettls
+    app: dotnet-ssl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dotnettls
+      app: dotnet-ssl
   template:
     metadata:
       labels:
-        app: dotnettls
+        app: dotnet-ssl
     spec:
       serviceAccountName: workload-identity-sa
       containers:
-        - name: dotnettls
+        - name: dotnet-ssl
           image: keithh.azurecr.io/dotnet-ssl:0.3
           env:
           - name: ASPNETCORE_URLS
@@ -40,39 +40,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: dotnettls
+  name: dotnet-ssl
 spec:
   ports:
   - name: https
     port: 443
     targetPort: 443
   selector:
-    app: dotnettls
+    app: dotnet-ssl
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: dotnettls-https
+  name: dotnet-ssl-https
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/secure-backends: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
   labels:
-    app: dotnettls
+    app: dotnet-ssl
 spec:
   tls:
   - hosts:
-    - dotnettls-https.kizah.in
+    - dotnet-ssl-https.kizah.in
     secretName: quickstart-example-tls
   ingressClassName: nginx
   rules:
-    - host: dotnettls-https.kizah.in
+    - host: dotnet-ssl-https.kizah.in
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: dotnettls # helloworld # dotnettls
+                name: dotnet-ssl # helloworld # dotnet-ssl
                 port:
                   name: https
