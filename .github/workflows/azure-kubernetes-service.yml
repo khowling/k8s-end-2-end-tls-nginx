@@ -72,6 +72,7 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
     environment: 
+      name: uat
       url: https://dotnet-ssl.kizah.in
     needs: [buildImage]
     steps:
