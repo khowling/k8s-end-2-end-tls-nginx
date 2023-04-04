@@ -17,7 +17,7 @@ spec:
       serviceAccountName: workload-identity-sa
       containers:
         - name: dotnettls
-          image: mcr.microsoft.com/dotnet/samples:aspnetapp
+          image: keithh.azurecr.io/dotnet-ssl:0.3
           env:
           - name: ASPNETCORE_URLS
             value: "https://+;http://+"
