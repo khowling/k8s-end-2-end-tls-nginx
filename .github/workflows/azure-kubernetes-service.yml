@@ -71,6 +71,8 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
+    environment: 
+      url: https://dotnet-ssl.kizah.in
     needs: [buildImage]
     steps:
       # Checks out the repository this file is in

@@ -62,11 +62,11 @@ metadata:
 spec:
   tls:
   - hosts:
-    - dotnet-ssl-https.kizah.in
+    - dotnet-ssl.kizah.in
     secretName: quickstart-example-tls
   ingressClassName: nginx
   rules:
-    - host: dotnet-ssl-https.kizah.in
+    - host: dotnet-ssl.kizah.in
       http:
         paths:
           - path: /
